@@ -31,19 +31,60 @@ namespace ConsoleApp1
             string move = "";
             while (continueplay)
             {
-                Console.Write("Player %1, make your move: ", currentPlayer);
-
-                move = Console.ReadLine();
-                VerifyMove(move);
-                SetMove(move);
-                CheckBoard();
+                string result = "";
                 PrintBoard();
+                Console.Write("Player %1, make your move: ", currentPlayer);
+                move = Console.ReadLine();
+
+                VerifyMove(move);
+                result = CheckBopardForWinner();
+                SetMove(move);
+
+                if (result != "")
+                {
+                    Console.WriteLine("Congratultaions %1. YOU WON!", result);
+                    if (PlayAgain())
+                    {
+                        ClearBoard();
+                    }
+                    else
+                    {
+                        continueplay = false;
+                    }
+                }
             }
 
             Console.WriteLine("Thanks for playing!");
         }
 
-        private static void CheckBoard()
+        private static bool PlayAgain()
+        {
+            bool invalid = true;
+            bool returnValue = false;
+            while (invalid)
+            {
+                Console.WriteLine("Would you like to play another game? [y/n]");
+                string playAgain = "";
+                playAgain = Console.ReadLine();
+                if (playAgain == "y")
+                {
+                    invalid = false;
+                    returnValue = true;
+                }
+                else if (playAgain == "n")
+                {
+                    invalid = false;
+                    returnValue = false;
+                }
+                else
+                {
+                    invalid = true;
+                }
+            }
+            return returnValue;
+        }
+
+        private static string CheckBopardForWinner()
         {
             throw new NotImplementedException();
         }
@@ -66,7 +107,7 @@ namespace ConsoleApp1
         private static void SetupBoard(int dimension)
         {
             board = new char[dimension][];
-            for(int x = 0; x<board.Length; x++)
+            for (int x = 0; x < board.Length; x++)
             {
                 board[x] = new char[dimension];
             }
