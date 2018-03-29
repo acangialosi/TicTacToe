@@ -38,8 +38,9 @@ namespace ConsoleApp1
                 SetMove(move);
                 CheckBoard();
                 PrintBoard();
-
             }
+
+            Console.WriteLine("Thanks for playing!");
         }
 
         private static void CheckBoard()
