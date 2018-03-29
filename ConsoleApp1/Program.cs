@@ -6,7 +6,9 @@ namespace ConsoleApp1
     {
         static char[][] board;
         private static bool continueplay = true;
+        private static int currentPlayer;
         private static readonly char emptyCell = '\0';
+        private
 
         static void Main(string[] args)
         {
@@ -25,9 +27,13 @@ namespace ConsoleApp1
 
         private static void PlayGame()
         {
+            Console.Write("Decide who is player 'X' and who is player 'O' then press any key to start the game.");
+            Console.ReadLine();
             string move = "";
             while (continueplay)
             {
+                Console.Write("Player %1, make your move: ", currentPlayer);
+
                 move = Console.ReadLine();
 
             }
