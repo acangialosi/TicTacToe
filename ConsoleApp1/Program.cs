@@ -8,7 +8,6 @@ namespace ConsoleApp1
         private static bool continueplay = true;
         private static int currentPlayer;
         private static readonly char emptyCell = '\0';
-        private
 
         static void Main(string[] args)
         {
@@ -35,8 +34,32 @@ namespace ConsoleApp1
                 Console.Write("Player %1, make your move: ", currentPlayer);
 
                 move = Console.ReadLine();
+                VerifyMove(move);
+                SetMove(move);
+                CheckBoard();
+                PrintBoard();
 
             }
+        }
+
+        private static void CheckBoard()
+        {
+            throw new NotImplementedException();
+        }
+
+        private static void PrintBoard()
+        {
+            throw new NotImplementedException();
+        }
+
+        private static void SetMove(string move)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static void VerifyMove(string move)
+        {
+            throw new NotImplementedException();
         }
 
         private static void SetupBoard(int dimension)
