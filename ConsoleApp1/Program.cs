@@ -4,60 +4,71 @@ namespace ConsoleApp1
 {
     class Program
     {
-        static char[][] board;
-        private static bool continueplay = true;
-        private static int currentPlayer;
-        private static readonly char emptyCell = '\0';
+        static int dimension = 3;
+        private static char emptyCell = ' ';
 
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
-            int dimension = 3;
-
             if (args.Length != 0)
             {
                 dimension = int.Parse(args[0]);
             }
-
-            SetupBoard(dimension);
 
             PlayGame();
         }
 
         private static void PlayGame()
         {
-            Console.Write("Decide who is player 'X' and who is player 'O' then press any key to start the game.");
-            Console.ReadLine();
-            string move = "";
-            while (continueplay)
+            char[][] gameBoard;
+            int currentPlayer = 0; // 0 == X 1 == Y
+            int moveCount = -1;
+
+            gameBoard = new char[dimension][];
+            for (int x = 0; x < gameBoard.Length; x++)
             {
-                string result = "";
-                PrintBoard();
-                Console.Write("Player %1, make your move: ", currentPlayer);
-                move = Console.ReadLine();
+                gameBoard[x] = new char[dimension];
+            }
 
-                VerifyMove(move);
-                result = CheckBopardForWinner();
-                SetMove(move);
+            ClearBoard(gameBoard);
 
-                if (result != "")
+            do
+            {
+                ClearBoard(gameBoard);
+                Console.Write("Decide who is player 'X' and who is player 'O' then press any key to start the game.");
+                Console.ReadLine();
+                string strMove = "";
+
+                while (!EndOfGame(gameBoard, PrintPlayer(currentPlayer)))
                 {
-                    Console.WriteLine("Congratultaions %1. YOU WON!", result);
-                    if (PlayAgain())
+                    moveCount++;
+                    currentPlayer = moveCount % 2;
+                    PrintBoard(gameBoard);
+                    //                    Console.Write("Player %1, make your move: ", currentPlayer);
+                    Console.Write("Player " + PrintPlayer(currentPlayer) + ", make your move: ");
+                    strMove = Console.ReadLine();
+
+                    try
                     {
-                        ClearBoard();
+                        Tuple<int, int> move = ConvertMove(strMove);
+                        SetMove(gameBoard, move, PrintPlayer(currentPlayer));
                     }
-                    else
+                    catch (InvalidMoveException)
                     {
-                        continueplay = false;
+                        Console.WriteLine();
+                        Console.WriteLine("INVALID MOVE");
+                        Console.WriteLine();
+                        moveCount--;
                     }
                 }
-            }
+                //                Console.WriteLine("Congratultaions player %1. YOU WON!", currentPlayer);
+                Console.WriteLine("Congratultaions player " + PrintPlayer(currentPlayer) + ". YOU WON!");
+
+            } while (NewGame());
 
             Console.WriteLine("Thanks for playing!");
         }
 
-        private static bool PlayAgain()
+        private static bool NewGame()
         {
             bool invalid = true;
             bool returnValue = false;
@@ -81,45 +92,134 @@ namespace ConsoleApp1
                     invalid = true;
                 }
             }
+
             return returnValue;
         }
 
-        private static string CheckBopardForWinner()
+        private static bool EndOfGame(char[][] board, char player)
         {
-            throw new NotImplementedException();
-        }
-
-        private static void PrintBoard()
-        {
-            throw new NotImplementedException();
-        }
-
-        private static void SetMove(string move)
-        {
-            throw new NotImplementedException();
-        }
-
-        private static void VerifyMove(string move)
-        {
-            throw new NotImplementedException();
-        }
-
-        private static void SetupBoard(int dimension)
-        {
-            board = new char[dimension][];
-            for (int x = 0; x < board.Length; x++)
+            int x = 0;
+            int y = 0;
+            // Check Rows
+            for (y = 0; y < board.Length; y++)
             {
-                board[x] = new char[dimension];
+                for (x = 0; x < board[y].Length; x++)
+                {
+                    if (player == board[x][y])
+                    {
+                        x++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                if(x == board.Length)
+                {
+                    return true;
+                }
             }
 
-            ClearBoard();
-            //foreach( char[] y in Board)
-            //{
-            //    y = new char[dimension];
-            //}
+            // Check columns
+            for (y = 0; y < board.Length; y++)
+            {
+                for (x = 0; x < board[y].Length; x++)
+                {
+                    if (player == board[y][x])
+                    {
+                        y++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                if (y == board[x].Length)
+                {
+                    return true;
+                }
+            }
+
+            // Check Diagnol
+
+
+            return false;
         }
 
-        private static void ClearBoard()
+       private static string GetSeperatorLine()
+        {
+            int seperatorLength = (dimension) * 3 + dimension - 1;
+            string seperator = "";
+            for(int x = 0; x < seperatorLength; x++)
+            {
+                seperator += "-";
+            }
+
+            return seperator;
+        }
+
+        private static void PrintBoard(char[][] board)
+        {
+            string seperator = GetSeperatorLine();
+            for (int y = 0; y < board.Length; y++)
+            {
+                Console.WriteLine(seperator);
+                for (int x = 0; x < board[y].Length; x++)
+                {
+                    if (x == 0)
+                    {
+                        Console.Write(" ");
+                    }
+                    Console.Write(board[x][y]);
+                    if(x+1 < board[y].Length)
+                    {
+                        Console.Write(" | ");
+                    }
+                }
+                Console.WriteLine();
+            }
+            Console.WriteLine(seperator);
+        }
+
+        private static char PrintPlayer(int player)
+        {
+            if (player == 0)
+            {
+                return 'X';
+            }
+            else
+                return 'O';
+        }
+
+        private static void SetMove(char[][] board, Tuple<int, int> move, char player)
+        {
+            if(board[move.Item1][move.Item2] != emptyCell)
+            {
+                throw new InvalidMoveException();
+            }
+
+            board[move.Item1][move.Item2] = player;
+        }
+
+        private static Tuple<int, int> ConvertMove(string move)
+        {
+            Tuple<int, int> returnValue;
+            try
+            {
+                string[] parts = move.Split(',');
+                returnValue = new Tuple<int, int>(int.Parse(parts[0]), int.Parse(parts[1]));
+            }
+            catch(Exception)
+            {
+                throw new InvalidMoveException();
+            }
+
+            return returnValue;
+        }
+
+        private static void ClearBoard(char[][] board)
         {
             for (int x = 0; x < board.Length; x++)
             {
