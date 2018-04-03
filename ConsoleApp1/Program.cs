@@ -19,15 +19,11 @@ namespace ConsoleApp1
 
         private static void PlayGame()
         {
-            char[][] gameBoard;
+            char[,] gameBoard;
             int currentPlayer = 0; // 0 == X 1 == Y
             int moveCount = -1;
 
-            gameBoard = new char[dimension][];
-            for (int x = 0; x < gameBoard.Length; x++)
-            {
-                gameBoard[x] = new char[dimension];
-            }
+            gameBoard = new char[dimension,dimension];
 
             ClearBoard(gameBoard);
 
@@ -43,8 +39,7 @@ namespace ConsoleApp1
                     moveCount++;
                     currentPlayer = moveCount % 2;
                     PrintBoard(gameBoard);
-                    //                    Console.Write("Player %1, make your move: ", currentPlayer);
-                    Console.Write("Player " + PrintPlayer(currentPlayer) + ", make your move: ");
+                    Console.Write("Player {0}, make your move: ", PrintPlayer(currentPlayer));
                     strMove = Console.ReadLine();
 
                     try
@@ -52,16 +47,23 @@ namespace ConsoleApp1
                         Tuple<int, int> move = ConvertMove(strMove);
                         SetMove(gameBoard, move, PrintPlayer(currentPlayer));
                     }
-                    catch (InvalidMoveException)
+                    catch (Exception ex)
                     {
-                        Console.WriteLine();
-                        Console.WriteLine("INVALID MOVE");
-                        Console.WriteLine();
-                        moveCount--;
+                        if (ex is InvalidMoveException || ex is IndexOutOfRangeException)
+                        {
+                            Console.WriteLine();
+                            Console.WriteLine("INVALID MOVE");
+                            Console.WriteLine();
+                            moveCount--;
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
                 }
-                //                Console.WriteLine("Congratultaions player %1. YOU WON!", currentPlayer);
-                Console.WriteLine("Congratultaions player " + PrintPlayer(currentPlayer) + ". YOU WON!");
+                PrintBoard(gameBoard);
+                Console.WriteLine("Congratultaions player {0}. YOU WON!", PrintPlayer(currentPlayer));
 
             } while (NewGame());
 
@@ -96,16 +98,16 @@ namespace ConsoleApp1
             return returnValue;
         }
 
-        private static bool EndOfGame(char[][] board, char player)
+        private static bool EndOfGame(char[,] board, char player)
         {
             int x = 0;
             int y = 0;
             // Check Rows
-            for (y = 0; y < board.Length; y++)
+            for (y = 0; y < dimension; y++)
             {
-                for (x = 0; x < board[y].Length; x++)
+                for (x = 0; x < dimension; )
                 {
-                    if (player == board[x][y])
+                    if (player == board[x,y])
                     {
                         x++;
                     }
@@ -115,18 +117,18 @@ namespace ConsoleApp1
                     }
                 }
 
-                if(x == board.Length)
+                if(x == dimension)
                 {
                     return true;
                 }
             }
 
             // Check columns
-            for (y = 0; y < board.Length; y++)
+            for (x = 0; x < dimension; x++)
             {
-                for (x = 0; x < board[y].Length; x++)
+                for (y = 0; y < dimension; )
                 {
-                    if (player == board[y][x])
+                    if (player == board[x,y])
                     {
                         y++;
                     }
@@ -136,7 +138,7 @@ namespace ConsoleApp1
                     }
                 }
 
-                if (y == board[x].Length)
+                if (y == dimension)
                 {
                     return true;
                 }
@@ -160,20 +162,20 @@ namespace ConsoleApp1
             return seperator;
         }
 
-        private static void PrintBoard(char[][] board)
+        private static void PrintBoard(char[,] board)
         {
             string seperator = GetSeperatorLine();
-            for (int y = 0; y < board.Length; y++)
+            for (int y = 0; y < dimension; y++)
             {
                 Console.WriteLine(seperator);
-                for (int x = 0; x < board[y].Length; x++)
+                for (int x = 0; x < dimension; x++)
                 {
                     if (x == 0)
                     {
                         Console.Write(" ");
                     }
-                    Console.Write(board[x][y]);
-                    if(x+1 < board[y].Length)
+                    Console.Write(board[x,y]);
+                    if(x+1 < dimension)
                     {
                         Console.Write(" | ");
                     }
@@ -193,14 +195,14 @@ namespace ConsoleApp1
                 return 'O';
         }
 
-        private static void SetMove(char[][] board, Tuple<int, int> move, char player)
+        private static void SetMove(char[,] board, Tuple<int, int> move, char player)
         {
-            if(board[move.Item1][move.Item2] != emptyCell)
+            if(board[move.Item1,move.Item2] != emptyCell)
             {
                 throw new InvalidMoveException();
             }
 
-            board[move.Item1][move.Item2] = player;
+            board[move.Item1,move.Item2] = player;
         }
 
         private static Tuple<int, int> ConvertMove(string move)
@@ -219,13 +221,13 @@ namespace ConsoleApp1
             return returnValue;
         }
 
-        private static void ClearBoard(char[][] board)
+        private static void ClearBoard(char[,] board)
         {
-            for (int x = 0; x < board.Length; x++)
+            for (int x = 0; x < dimension; x++)
             {
-                for (int y = 0; y < board[x].Length; y++)
+                for (int y = 0; y < dimension; y++)
                 {
-                    board[x][y] = emptyCell;
+                    board[x,y] = emptyCell;
                 }
             }
         }
