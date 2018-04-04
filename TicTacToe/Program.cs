@@ -72,29 +72,23 @@ namespace TicTacToe
 
         private static bool NewGame()
         {
-            bool invalid = true;
             bool returnValue = false;
-            while (invalid)
+            Console.WriteLine("Would you like to play another game? [y/n]");
+            string playAgain;
+            playAgain = Console.ReadLine();
+            if (playAgain == "y")
             {
-                Console.WriteLine("Would you like to play another game? [y/n]");
-                string playAgain = "";
-                playAgain = Console.ReadLine();
-                if (playAgain == "y")
-                {
-                    invalid = false;
-                    returnValue = true;
-                }
-                else if (playAgain == "n")
-                {
-                    invalid = false;
-                    returnValue = false;
-                }
-                else
-                {
-                    invalid = true;
-                }
+                returnValue = true;
             }
-
+            else if (playAgain == "n")
+            {
+                returnValue = false;
+            }
+            else
+            {
+                returnValue = NewGame();
+            }
+ 
             return returnValue;
         }
 
