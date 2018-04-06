@@ -23,7 +23,7 @@ namespace TicTacToe
             int currentPlayer = 0; // 0 == X 1 == Y
             int moveCount = -1;
 
-            gameBoard = new char[dimension,dimension];
+            gameBoard = new char[dimension, dimension];
 
             ClearBoard(gameBoard);
 
@@ -88,7 +88,7 @@ namespace TicTacToe
             {
                 returnValue = NewGame();
             }
- 
+
             return returnValue;
         }
 
@@ -99,9 +99,9 @@ namespace TicTacToe
             // Check Rows
             for (y = 0; y < dimension; y++)
             {
-                for (x = 0; x < dimension; )
+                for (x = 0; x < dimension;)
                 {
-                    if (player == board[x,y])
+                    if (player == board[x, y])
                     {
                         x++;
                     }
@@ -111,7 +111,7 @@ namespace TicTacToe
                     }
                 }
 
-                if(x == dimension)
+                if (x == dimension)
                 {
                     return true;
                 }
@@ -120,9 +120,9 @@ namespace TicTacToe
             // Check columns
             for (x = 0; x < dimension; x++)
             {
-                for (y = 0; y < dimension; )
+                for (y = 0; y < dimension;)
                 {
-                    if (player == board[x,y])
+                    if (player == board[x, y])
                     {
                         y++;
                     }
@@ -139,16 +139,50 @@ namespace TicTacToe
             }
 
             // Check Diagnol
+            for (x = 0; x < dimension; x++)
+            {
+                if (player == board[x, x])
+                {
+                    y++;
+                }
+                else
+                {
+                    break;
+                }
 
+                if (y == dimension)
+                {
+                    return true;
+                }
+            }
+
+            // Check Anti-Diagnol
+            for (x = 0; x < dimension; x++)
+            {
+                 
+                if (player == board[(dimension - 1) - x, 0 + x])
+                {
+                    y++;
+                }
+                else
+                {
+                    break;
+                }
+
+                if (y == dimension)
+                {
+                    return true;
+                }
+            }
 
             return false;
         }
 
-       private static string GetSeperatorLine()
+        private static string GetSeperatorLine()
         {
             int seperatorLength = (dimension) * 3 + dimension - 1;
             string seperator = "";
-            for(int x = 0; x < seperatorLength; x++)
+            for (int x = 0; x < seperatorLength; x++)
             {
                 seperator += "-";
             }
@@ -168,8 +202,8 @@ namespace TicTacToe
                     {
                         Console.Write(" ");
                     }
-                    Console.Write(board[x,y]);
-                    if(x+1 < dimension)
+                    Console.Write(board[x, y]);
+                    if (x + 1 < dimension)
                     {
                         Console.Write(" | ");
                     }
@@ -191,12 +225,12 @@ namespace TicTacToe
 
         private static void SetMove(char[,] board, Tuple<int, int> move, char player)
         {
-            if(board[move.Item1,move.Item2] != emptyCell)
+            if (board[move.Item1, move.Item2] != emptyCell)
             {
                 throw new InvalidMoveException();
             }
 
-            board[move.Item1,move.Item2] = player;
+            board[move.Item1, move.Item2] = player;
         }
 
         private static Tuple<int, int> ConvertMove(string move)
@@ -207,7 +241,7 @@ namespace TicTacToe
                 string[] parts = move.Split(',');
                 returnValue = new Tuple<int, int>(int.Parse(parts[0]), int.Parse(parts[1]));
             }
-            catch(Exception)
+            catch (Exception)
             {
                 throw new InvalidMoveException();
             }
@@ -221,7 +255,7 @@ namespace TicTacToe
             {
                 for (int y = 0; y < dimension; y++)
                 {
-                    board[x,y] = emptyCell;
+                    board[x, y] = emptyCell;
                 }
             }
         }
