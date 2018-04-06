@@ -21,7 +21,9 @@ namespace TicTacToe
         {
             char[,] gameBoard;
             int currentPlayer = 0; // 0 == X 1 == Y
-            int moveCount = -1;
+            string strMove;
+            int moveCount;
+            Tuple<int, int> move = new Tuple<int, int>(0, 0);
 
             gameBoard = new char[dimension, dimension];
 
@@ -32,9 +34,10 @@ namespace TicTacToe
                 ClearBoard(gameBoard);
                 Console.Write("Decide who is player 'X' and who is player 'O' then press any key to start the game.");
                 Console.ReadLine();
-                string strMove = "";
+                strMove = "";
+                moveCount = -1;
 
-                while (!EndOfGame(gameBoard, PrintPlayer(currentPlayer)))
+                while (!EndOfGame(gameBoard, PrintPlayer(currentPlayer), move))
                 {
                     moveCount++;
                     currentPlayer = moveCount % 2;
@@ -44,7 +47,7 @@ namespace TicTacToe
 
                     try
                     {
-                        Tuple<int, int> move = ConvertMove(strMove);
+                        move = ConvertMove(strMove);
                         SetMove(gameBoard, move, PrintPlayer(currentPlayer));
                     }
                     catch (Exception ex)
@@ -92,84 +95,61 @@ namespace TicTacToe
             return returnValue;
         }
 
-        private static bool EndOfGame(char[,] board, char player)
+        private static bool EndOfGame(char[,] board, char player, Tuple<int, int> move)
         {
-            int x = 0;
-            int y = 0;
-            // Check Rows
-            for (y = 0; y < dimension; y++)
+            // Check column
+            for (int y = 0; y < dimension; y++)
             {
-                for (x = 0; x < dimension;)
+                if (player != board[move.Item1, y])
                 {
-                    if (player == board[x, y])
-                    {
-                        x++;
-                    }
-                    else
-                    {
-                        break;
-                    }
+                    break;
                 }
 
-                if (x == dimension)
+                if (y == dimension - 1)
                 {
                     return true;
                 }
             }
 
-            // Check columns
-            for (x = 0; x < dimension; x++)
+            // Check row
+            for (int x = 0; x < dimension; x++)
             {
-                for (y = 0; y < dimension;)
+                if (player != board[x, move.Item2])
                 {
-                    if (player == board[x, y])
-                    {
-                        y++;
-                    }
-                    else
-                    {
-                        break;
-                    }
+                    break;
                 }
 
-                if (y == dimension)
+                if (x == dimension - 1)
                 {
                     return true;
                 }
             }
 
             // Check Diagnol
-            for (x = 0; x < dimension; x++)
+            for (int n = 0; n < dimension; n++)
             {
-                if (player == board[x, x])
-                {
-                    y++;
-                }
-                else
+                if (player != board[n, n])
                 {
                     break;
                 }
 
-                if (y == dimension)
+                if (n == dimension - 1)
                 {
                     return true;
                 }
             }
 
+
             // Check Anti-Diagnol
-            for (x = 0; x < dimension; x++)
+            for (int n = 0; n < dimension; n++)
             {
-                 
-                if (player == board[(dimension - 1) - x, 0 + x])
-                {
-                    y++;
-                }
-                else
+
+                if (player != board[(dimension - 1) - n, 0 + n])
                 {
                     break;
                 }
 
-                if (y == dimension)
+                if (n == dimension - 1)
                 {
                     return true;
                 }
