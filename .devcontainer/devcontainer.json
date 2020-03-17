@@ -1,0 +1,6 @@
+{
+    "extensions": [
+        "ms-dotnettools.csharp",
+        "formulahendry.dotnet-test-explorer"
+    ]
+}
